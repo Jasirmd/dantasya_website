@@ -1,0 +1,21 @@
+{
+  "name": "dantasya-website",
+  "version": "1.0.0",
+  "description": "Dantasya - The Dental Academy Website",
+  "main": "index.html",
+  "scripts": {
+    "dev": "live-server --port=3000 --open=/index.html",
+    "start": "live-server --port=8080 --open=/index.html"
+  },
+  "keywords": [
+    "dental",
+    "academy",
+    "education",
+    "dantasya"
+  ],
+  "author": "Dantasya",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

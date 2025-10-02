@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dantasya - The Dental Academy</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        :root {
+            --primary-gold: #D4AF37;
+            --light-gold: #F4E09A;
+            --dark-gold: #B8941F;
+            --rich-gold: #FFD700;
+            --cream: #FFF8DC;
+            --dark-bg: rgba(26, 26, 26, 0.95);
+            --glass-bg: rgba(26, 26, 26, 0.8);
+            --text-dark: #2C2C2C;
+            --text-light: #666;
+        }
+
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            border-bottom: 1px solid transparent;
+            box-shadow: none;
+            transition: all 0.4s ease;
+        }
+
+        .top-navbar.scrolled {
+            background: rgba(26, 26, 26, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar-logo-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .navbar-logo {
+            height: 50px;
+            width: auto;
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 35px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            padding: 8px 18px;
+            border-radius: 25px;
+            position: relative;
+        }
+
+        .top-navbar.scrolled .nav-links a {
+            color: white;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-gold);
+            background: rgba(212, 175, 55, 0.15);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gold);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-links a:hover::after {
+            width: 60%;
+        }
+
+        .nav-links a.active {
+            color: var(--primary-gold);
+            background: rgba(212, 175, 55, 0.2);
+        }
+
+        .nav-links a.active::after {
+            width: 60%;
+        }
+
+        .mobile-section-indicator {
+            display: none;
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: capitalize;
+            position: relative;
+            padding-bottom: 8px;
+        }
+
+        .mobile-section-indicator::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-gold);
+        }
+
+        .top-navbar.scrolled .mobile-section-indicator {
+            color: white;
+        }
+
+        .hero-section {
+            height: 100vh;
+            background: linear-gradient(135deg, var(--cream) 0%, var(--light-gold) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveBackground 20s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            0% {
+                transform: translate(0, 0);
+            }
+            100% {
+                transform: translate(50px, 50px);
+            }
+        }
+
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(255, 215, 0, 0.1));
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .shape:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+            animation-duration: 20s;
+        }
+
+        .shape:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 2s;
+            animation-duration: 18s;
+        }
+
+        .shape:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+            animation-duration: 22s;
+        }
+
+        .shape:nth-child(4) {
+            width: 250px;
+            height: 250px;
+            top: 30%;
+            right: 25%;
+            animation-delay: 1s;
+            animation-duration: 25s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.3;
+            }
+            25% {
+                transform: translate(30px, -30px) scale(1.1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: translate(-20px, 20px) scale(0.9);
+                opacity: 0.4;
+            }
+            75% {
+                transform: translate(20px, 30px) scale(1.05);
+                opacity: 0.6;
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-content h1 {
+            font-size: 5rem;
+            font-weight: 900;
+            letter-spacing: 0.15em;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--dark-gold), var(--primary-gold), var(--rich-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+            position: relative;
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% {
+                filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
+            }
+            50% {
+                filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.6));
+            }
+        }
+
+        .subtitle-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .subtitle-line {
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--primary-gold), transparent);
+            position: relative;
+        }
+
+        .subtitle-line::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--primary-gold);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            color: var(--text-dark);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            padding: 12px 30px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50px;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
+        }
+
+        .hero-content p {
+            font-size: 1.3rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .rotating-text-container {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin: 30px auto;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .rotating-word {
+            display: inline-block;
+            color: var(--primary-gold);
+            font-weight: 700;
+            position: relative;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .fade-out {
+            animation: fadeOut 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+
+        .section {
+            padding: 60px 20px 100px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 60px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .courses-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: start;
+            margin-top: 40px;
+        }
+
+        .course-left-column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .course-intro {
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .course-intro h3 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+        }
+
+        .course-intro p {
+            margin-bottom: 0;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .course-image-container {
+            position: relative;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .course-image-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), transparent);
+            z-index: 1;
+        }
+
+        .course-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .course-image-container:hover .course-image {
+            transform: scale(1.05);
+        }
+
+        .course-modules-section {
+            padding: 20px;
+        }
+
+        .courses-grid, .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .course-card, .team-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .team-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            border-color: var(--primary-gold);
+        }
+
+        .masterclass-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .masterclass-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .masterclass-image-container {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .masterclass-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .masterclass-section-wrapper {
+            background: var(--cream);
+            padding: 60px 0 100px;
+            margin-left: calc(-50vw + 50%);
+            margin-right: calc(-50vw + 50%);
+            padding-left: calc(50vw - 50%);
+            padding-right: calc(50vw - 50%);
+        }
+
+        .module-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(212, 175, 55, 0.05);
+            border-radius: 10px;
+            border-left: 3px solid var(--primary-gold);
+            transition: all 0.3s ease;
+        }
+
+        .module-item:hover {
+            background: rgba(212, 175, 55, 0.1);
+            transform: translateX(5px);
+        }
+
+        .module-item strong {
+            display: block;
+            color: var(--text-dark);
+            font-size: 1.05rem;
+            margin-bottom: 5px;
+        }
+
+        .team-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--light-gold), var(--primary-gold));
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover .team-photo {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.5);
+        }
+
+        .course-card h3, .team-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .course-card p, .team-card p {
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .enroll-btn {
+            background: linear-gradient(135deg, var(--primary-gold), var(--dark-gold));
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .enroll-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .contact-section-wrapper {
+            background: linear-gradient(135deg, var(--text-dark) 0%, #1a1a1a 100%);
+            color: white;
+            padding: 60px 0 80px;
+            margin-left: calc(-50vw + 50%);
+            margin-right: calc(-50vw + 50%);
+            padding-left: calc(50vw - 50%);
+            padding-right: calc(50vw - 50%);
+        }
+
+        .contact-section {
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .contact-item {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 40px 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-5px);
+        }
+
+        .contact-item h4 {
+            color: var(--primary-gold);
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .contact-item p {
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .contact-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, var(--primary-gold), var(--dark-gold));
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .contact-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);
+            border-color: var(--rich-gold);
+        }
+
+        .footer {
+            background: #0a0a0a;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            padding: 30px 20px;
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-container {
+                padding: 15px 20px;
+            }
+
+            .navbar-logo {
+                height: 45px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-section-indicator {
+                display: block;
+            }
+
+            .hero-content h1 {
+                font-size: 2.5rem;
+                letter-spacing: 0.1em;
+            }
+
+            .hero-subtitle {
+                font-size: 0.9rem;
+                padding: 10px 20px;
+            }
+
+            .subtitle-container {
+                gap: 10px;
+            }
+
+            .subtitle-line {
+                display: none;
+            }
+
+            .rotating-text-container {
+                font-size: 1.1rem;
+                flex-wrap: wrap;
+            }
+
+            .rotating-word {
+                min-width: 150px;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .courses-layout {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .course-left-column {
+                order: 1;
+            }
+
+            .course-modules-section {
+                order: 2;
+            }
+
+            .courses-grid, .team-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .masterclass-card {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .masterclass-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .contact-info {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .contact-item {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function RotatingText() {
+            const words = ['Excellence', 'Innovation', 'Expertise', 'Education', 'Training'];
+            const [currentIndex, setCurrentIndex] = useState(0);
+            const [isAnimating, setIsAnimating] = useState(false);
+
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    setIsAnimating(true);
+                    setTimeout(() => {
+                        setCurrentIndex((prevIndex) => (prevIndex + 1) % words.length);
+                        setIsAnimating(false);
+                    }, 500);
+                }, 2000);
+
+                return () => clearInterval(interval);
+            }, []);
+
+            return (
+                <div className="rotating-text-container">
+                    <span>Advancing dental</span>
+                    <span className={`rotating-word ${isAnimating ? 'fade-out' : 'fade-in'}`}>
+                        {words[currentIndex]}
+                    </span>
+                    <span>through comprehensive training</span>
+                </div>
+            );
+        }
+
+        function App() {
+            const [activeSection, setActiveSection] = useState('home');
+            const [isScrolled, setIsScrolled] = useState(false);
+
+            useEffect(() => {
+                const handleScroll = () => {
+                    if (window.scrollY > 50) {
+                        setIsScrolled(true);
+                    } else {
+                        setIsScrolled(false);
+                    }
+
+                    // Detect active section
+                    const sections = ['home', 'courses', 'masterclass', 'team', 'contact'];
+                    for (let i = sections.length - 1; i >= 0; i--) {
+                        const section = document.getElementById(sections[i]);
+                        if (section) {
+                            const rect = section.getBoundingClientRect();
+                            if (rect.top <= 100 && rect.bottom >= 100) {
+                                setActiveSection(sections[i]);
+                                break;
+                            }
+                        }
+                    }
+                };
+
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            const scrollToSection = (sectionId, event) => {
+                event.preventDefault();
+                const element = document.getElementById(sectionId);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    setActiveSection(sectionId);
+                }
+            };
+
+            const getSectionDisplayName = (section) => {
+                const names = {
+                    'home': 'Home',
+                    'courses': 'Courses',
+                    'masterclass': 'Masterclass',
+                    'team': 'Team',
+                    'contact': 'Contact'
+                };
+                return names[section] || 'Home';
+            };
+
+            return (
+                <div className="app">
+                    {/* Full Width Navigation Bar */}
+                    <nav className={`top-navbar ${isScrolled ? 'scrolled' : ''}`}>
+                        <div className="navbar-container">
+                            <a href="#home" className="navbar-logo-link" onClick={(e) => scrollToSection('home', e)}>
+                                <img src="assets/images/logo.png" alt="Dantasya Logo" className="navbar-logo" />
+                            </a>
+                            <ul className="nav-links">
+                                <li><a href="#home" className={activeSection === 'home' ? 'active' : ''} onClick={(e) => scrollToSection('home', e)}>Home</a></li>
+                                <li><a href="#courses" className={activeSection === 'courses' ? 'active' : ''} onClick={(e) => scrollToSection('courses', e)}>Courses</a></li>
+                                <li><a href="#masterclass" className={activeSection === 'masterclass' ? 'active' : ''} onClick={(e) => scrollToSection('masterclass', e)}>Masterclass</a></li>
+                                <li><a href="#team" className={activeSection === 'team' ? 'active' : ''} onClick={(e) => scrollToSection('team', e)}>Team</a></li>
+                                <li><a href="#contact" className={activeSection === 'contact' ? 'active' : ''} onClick={(e) => scrollToSection('contact', e)}>Contact</a></li>
+                            </ul>
+                            <div className="mobile-section-indicator">
+                                {getSectionDisplayName(activeSection)}
+                            </div>
+                        </div>
+                    </nav>
+
+                    {/* Hero Section */}
+                    <section id="home" className="hero-section">
+                        <div className="floating-shapes">
+                            <div className="shape"></div>
+                            <div className="shape"></div>
+                            <div className="shape"></div>
+                            <div className="shape"></div>
+                        </div>
+                        <div className="hero-content">
+                            <h1>DANTASYA</h1>
+                            <div className="subtitle-container">
+                                <div className="subtitle-line"></div>
+                                <div className="hero-subtitle">The Dental Academy by Dr. Makam Gangaiah</div>
+                                <div className="subtitle-line"></div>
+                            </div>
+                            <RotatingText />
+                        </div>
+                    </section>
+
+                    {/* Courses Section */}
+                    <section id="courses" className="section">
+                        <h2 className="section-title">Professional Dental Courses</h2>
+                        <p className="section-subtitle">Advance your career with our specialized dental education programs</p>
+
+                        <div className="courses-layout">
+                            <div className="course-left-column">
+                                <div className="course-intro">
+                                    <h3>Advanced Implant Dentistry</h3>
+                                    <p>A comprehensive hands-on program led by Dr. Makam Gangaiah, combining theoretical knowledge with practical experience in implant dentistry.</p>
+                                </div>
+
+                                <div className="course-image-container">
+                                    <img src="assets/images/courses.png" alt="Dental Courses" className="course-image" />
+                                </div>
+                            </div>
+
+                            <div className="course-modules-section">
+                                <h4 style={{margin: "0 0 20px 0", color: "var(--primary-gold)", fontSize: "1.3rem"}}>Course Modules</h4>
+
+                                <div className="module-item">
+                                    <strong>Fundamentals of Implantology</strong>
+                                    <p style={{fontSize: "14px", margin: "5px 0", color: "var(--text-light)"}}>Core principles, treatment protocols, and case selection criteria.</p>
+                                </div>
+
+                                <div className="module-item">
+                                    <strong>Advanced Treatment Planning</strong>
+                                    <p style={{fontSize: "14px", margin: "5px 0", color: "var(--text-light)"}}>CBCT interpretation, 3D visualization, and guided surgery principles.</p>
+                                </div>
+
+                                <div className="module-item">
+                                    <strong>Prosthetic Considerations</strong>
+                                    <p style={{fontSize: "14px", margin: "5px 0", color: "var(--text-light)"}}>Impression techniques, abutment selection, and prosthetic design.</p>
+                                </div>
+
+                                <div className="module-item">
+                                    <strong>Practical Training & Simulation</strong>
+                                    <p style={{fontSize: "14px", margin: "5px 0", color: "var(--text-light)"}}>Hands-on experience with implant placement tools and techniques.</p>
+                                </div>
+
+                                <div className="module-item">
+                                    <strong>Clinical Practice</strong>
+                                    <p style={{fontSize: "14px", margin: "5px 0", color: "var(--text-light)"}}>Live patient cases and surgical procedure training.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Masterclass Section */}
+                    <div id="masterclass" className="masterclass-section-wrapper">
+                        <div className="section" style={{paddingTop: "0", paddingBottom: "0"}}>
+                            <h2 className="section-title">General Dentistry Masterclass</h2>
+                            <p className="section-subtitle">A comprehensive program covering all aspects of general dentistry, from diagnosis to advanced procedures.</p>
+
+                            <div className="masterclass-card">
+                                <div>
+                                    <h4 style={{margin: "0 0 30px 0", color: "var(--primary-gold)", fontSize: "1.3rem"}}>Course Modules</h4>
+
+                                    <div className="masterclass-content">
+                                        <div>
+                                            <strong style={{display: "block", marginBottom: "8px", color: "var(--text-dark)"}}>Diagnosis & Treatment Planning</strong>
+                                            <p style={{fontSize: "14px", margin: "0 0 20px 0", color: "var(--text-light)"}}>Comprehensive examination, radiographic interpretation, and treatment strategies.</p>
+                                        </div>
+
+                                        <div>
+                                            <strong style={{display: "block", marginBottom: "8px", color: "var(--text-dark)"}}>Conservative & Preventive Dentistry</strong>
+                                            <p style={{fontSize: "14px", margin: "0 0 20px 0", color: "var(--text-light)"}}>Modern restorative techniques and minimally invasive procedures.</p>
+                                        </div>
+
+                                        <div>
+                                            <strong style={{display: "block", marginBottom: "8px", color: "var(--text-dark)"}}>Endodontics</strong>
+                                            <p style={{fontSize: "14px", margin: "0 0 20px 0", color: "var(--text-light)"}}>Root canal therapy, access preparation, and obturation techniques.</p>
+                                        </div>
+
+                                        <div>
+                                            <strong style={{display: "block", marginBottom: "8px", color: "var(--text-dark)"}}>Crown & Bridge Procedures</strong>
+                                            <p style={{fontSize: "14px", margin: "0 0 20px 0", color: "var(--text-light)"}}>Crown preparation, tissue management, and temporary fabrication.</p>
+                                        </div>
+
+                                        <div>
+                                            <strong style={{display: "block", marginBottom: "8px", color: "var(--text-dark)"}}>Oral Surgery</strong>
+                                            <p style={{fontSize: "14px", margin: "0 0 20px 0", color: "var(--text-light)"}}>Extraction techniques, flap design, and post-operative care.</p>
+                                        </div>
+
+                                        <div>
+                                            <strong style={{display: "block", marginBottom: "8px", color: "var(--text-dark)"}}>Emergency Care</strong>
+                                            <p style={{fontSize: "14px", margin: "0 0 20px 0", color: "var(--text-light)"}}>Managing dental emergencies and acute pain conditions.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="masterclass-image-container">
+                                    <img src="assets/images/masterclass.png" alt="General Dentistry Masterclass" className="masterclass-image" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Team Section */}
+                    <section id="team" className="section">
+                        <h2 className="section-title">Our Expert Team</h2>
+                        <p className="section-subtitle">Meet our experienced professionals dedicated to dental excellence</p>
+
+                        <div className="team-grid">
+                            <div className="team-card">
+                                <div className="team-photo">MG</div>
+                                <h3>Dr. Makam Gangaiah</h3>
+                                <h4 style={{color: "var(--primary-gold)", marginBottom: "10px"}}>Lead Prosthodontist & Program Director</h4>
+                                <p style={{marginBottom: "15px"}}>Dr. Makam Gangaiah is a renowned prosthodontist and implantologist with extensive expertise in advanced dental procedures. He leads comprehensive training programs combining theoretical knowledge with practical clinical experience.</p>
+
+                                <div style={{marginBottom: "15px"}}>
+                                    <strong style={{color: "var(--primary-gold)"}}>Education</strong>
+                                    <p style={{fontSize: "14px", margin: "5px 0"}}>MDS - Prosthodontics</p>
+                                    <p style={{fontSize: "14px", margin: "5px 0"}}>Advanced Certification in Implantology</p>
+                                    <p style={{fontSize: "14px", margin: "5px 0"}}>Digital Dentistry Fellowship</p>
+                                </div>
+
+                                <div>
+                                    <strong style={{color: "var(--primary-gold)"}}>Experience</strong>
+                                    <p style={{fontSize: "14px", margin: "5px 0"}}>FBOCI - Fellow of British Academy of Clinical Implantology</p>
+                                    <p style={{fontSize: "14px", margin: "5px 0"}}>FDTRDO - Fellow of Digital Technology in Restorative Dentistry</p>
+                                </div>
+                            </div>
+
+                            <div className="team-card">
+                                <div className="team-photo">SG</div>
+                                <h3>Prof. Dr. Sowmya Gangaiah</h3>
+                                <h4 style={{color: "var(--primary-gold)", marginBottom: "10px"}}>Orthodontist & Dentofacial Orthopaedician</h4>
+                                <p style={{marginBottom: "15px"}}>BDS, MDS</p>
+
+                                <p style={{marginBottom: "15px"}}>Prof. Dr. Sowmya Gangaiah is a best and leading well known orthodontist in Bengaluru. She worked as lecturer in the same university for 1 year training undergraduates in clinicals and academics.</p>
+
+                                <div style={{marginBottom: "15px"}}>
+                                    <strong style={{color: "var(--primary-gold)"}}>Education</strong>
+                                    <p style={{fontSize: "14px", margin: "5px 0"}}>Bachelor of Dental Surgery - M.S. Ramaiah Faculty of Dental Sciences, Bengaluru (2003)</p>
+                                    <p style={{fontSize: "14px", margin: "5px 0"}}>MDS in Orthodontics & Dentofacial Orthopaedics - A.B.Shetty Memorial Institute of Dental Sciences (2008)</p>
+                                </div>
+
+                                <div>
+                                    <strong style={{color: "var(--primary-gold)"}}>Experience</strong>
+                                    <p style={{fontSize: "14px", margin: "5px 0"}}>Leading orthodontist in Bengaluru</p>
+                                    <p style={{fontSize: "14px", margin: "5px 0"}}>Lecturer experience in clinical training</p>
+                                    <p style={{fontSize: "14px", margin: "5px 0"}}>14+ Years of Clinical Experience</p>
+                                </div>
+                            </div>
+
+                            <div className="team-card">
+                                <div className="team-photo">PK</div>
+                                <h3>Dr. G Praveen Kumar</h3>
+                                <h4 style={{color: "var(--primary-gold)", marginBottom: "10px"}}>Dental Surgeon</h4>
+                                <p style={{marginBottom: "15px"}}>BDS, FBOCI</p>
+
+                                <p style={{marginBottom: "15px"}}>Dr. G Praveen Kumar brings 8 years of dedicated experience in dental surgery and implantology. His expertise in clinical practice and commitment to patient care has established him as a trusted dental professional.</p>
+
+                                <div style={{marginBottom: "15px"}}>
+                                    <strong style={{color: "var(--primary-gold)"}}>Education</strong>
+                                    <p style={{fontSize: "14px", margin: "5px 0"}}>Bachelor of Dental Surgery (BDS)</p>
+                                    <p style={{fontSize: "14px", margin: "5px 0"}}>Fellow of British Academy of Clinical Implantology (FBOCI)</p>
+                                </div>
+
+                                <div>
+                                    <strong style={{color: "var(--primary-gold)"}}>Experience</strong>
+                                    <p style={{fontSize: "14px", margin: "5px 0"}}>8+ years of clinical practice</p>
+                                    <p style={{fontSize: "14px", margin: "5px 0"}}>Expert in dental implant procedures</p>
+                                    <p style={{fontSize: "14px", margin: "5px 0"}}>Specialized in advanced dental surgeries</p>
+                                    <p style={{fontSize: "14px", margin: "5px 0"}}>Comprehensive patient care specialist</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Contact Section */}
+                    <div id="contact" className="contact-section-wrapper">
+                        <div className="contact-section">
+                            <h2 className="section-title" style={{color: "white"}}>Contact Us</h2>
+                            <p className="section-subtitle" style={{color: "rgba(255,255,255,0.8)"}}>Get in touch to learn more about our programs</p>
+
+                            <div className="contact-info">
+                                <div className="contact-item">
+                                    <h4>📍 Our Location</h4>
+                                    <p>House of Hiranandani, Balaji complex 1, Kodigehalli Main Rd opp Tatanagar entrance, opp. Glen gate, Bhadrappa Layout, Koti Hosahalli, Bengaluru, Karnataka 560094</p>
+                                </div>
+
+                                <div className="contact-item">
+                                    <h4>📞 Phone</h4>
+                                    <p style={{marginBottom: "20px"}}>097425 03814</p>
+                                    <a href="tel:+919742503814" className="contact-button">Call Now</a>
+                                </div>
+
+                                <div className="contact-item">
+                                    <h4>✉️ Email</h4>
+                                    <p style={{marginBottom: "20px"}}>info@dentessencepro.com</p>
+                                    <a href="mailto:info@dentessencepro.com" className="contact-button">Send Email</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Footer */}
+                    <footer className="footer">
+                        <p>© 2025 Dantasya. All rights reserved.</p>
+                    </footer>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
